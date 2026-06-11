@@ -19,7 +19,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-     const response = await axios.post('${process.env.NEXT_PUBLIC_API_URL}/api/Users/login', { email, password });
+     const response = await axios.post('http://saasloadbalancer-1223906419.us-east-1.elb.amazonaws.com/api/Users/login', { email, password });
       
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('tenantId', response.data.tenantId);
