@@ -1,0 +1,21 @@
+version: 1
+applications:
+  - frontend:
+      phases:
+        preBuild:
+          commands:
+            - cd saas-frontend && npm ci
+        build:
+          commands:
+            - cd saas-frontend && npm run build
+      artifacts:
+        baseDirectory: saas-frontend/.next
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - saas-frontend/node_modules/**/*
+    customRules:
+      - source: "/<*>"
+        target: "/index.html"
+        status: "200"
