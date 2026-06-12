@@ -19,6 +19,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
+
      const response = await axios.post('https://ALB-Load-Balancer-198596112.us-east-1.elb.amazonaws.com/api/Users/login', { email, password });
       
       localStorage.setItem('token', response.data.token);
