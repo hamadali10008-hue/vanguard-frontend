@@ -19,8 +19,8 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-
-     const response = await axios.post('https://saas-ALB-1284726133.us-east-1.elb.amazonaws.com/api/Users/login', { email, password });
+      // Fixed to hit the relative endpoint handled by vercel.json rewrites
+      const response = await axios.post('/api/Users/login', { email, password });
       
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('tenantId', response.data.tenantId);
@@ -28,7 +28,16 @@ export default function LoginPage() {
       localStorage.setItem('fullname', response.data.FullName); 
       router.push('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data || 'Invalid corporate credentials. Please try again.');
+      const serverError = err.response?.data;
+      
+      // Prevent React Error #31 by parsing objects explicitly
+      if (serverError && typeof serverError === 'object') {
+        setError(serverError.error || serverError.message || JSON.stringify(serverError));
+      } else if (typeof serverError === 'string') {
+        setError(serverError);
+      } else {
+        setError('Invalid corporate credentials. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -68,7 +77,7 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <div className="mt-6 rounded-lg border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
+            <div className="mt-6 rounded-lg border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400 break-all">
               {error}
             </div>
           )}
