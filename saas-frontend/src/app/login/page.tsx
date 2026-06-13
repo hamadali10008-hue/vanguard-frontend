@@ -28,14 +28,19 @@ export default function LoginPage() {
       localStorage.setItem('fullname', response.data.FullName); 
       router.push('/dashboard');
     } catch (err: any) {
-      // 1. THIS WILL FORCE THE RAW ERROR TO SHOW IN YOUR CONSOLE INSPECTOR
       console.error("RAW PROXY ERROR DETECTED:", err.response?.data);
       
       const serverError = err.response?.data;
       
-      // 2. Safely capture the new {code, message} structure Vercel is throwing
       if (serverError && typeof serverError === 'object') {
-        setError(serverError.message || serverError.code || JSON.stringify(serverError));
+        // Dig into the nested 'error' object if it exists
+        const nestedError = serverError.error;
+        
+        if (nestedError && typeof nestedError === 'object') {
+          setError(nestedError.message || nestedError.code || JSON.stringify(nestedError));
+        } else {
+          setError(serverError.message || serverError.code || JSON.stringify(serverError));
+        }
       } else if (typeof serverError === 'string') {
         setError(serverError);
       } else {
