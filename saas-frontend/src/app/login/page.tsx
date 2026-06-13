@@ -28,15 +28,18 @@ export default function LoginPage() {
       localStorage.setItem('fullname', response.data.FullName); 
       router.push('/dashboard');
     } catch (err: any) {
+      // 1. THIS WILL FORCE THE RAW ERROR TO SHOW IN YOUR CONSOLE INSPECTOR
+      console.error("RAW PROXY ERROR DETECTED:", err.response?.data);
+      
       const serverError = err.response?.data;
       
-      // Prevent React Error #31 by parsing objects explicitly
+      // 2. Safely capture the new {code, message} structure Vercel is throwing
       if (serverError && typeof serverError === 'object') {
-        setError(serverError.error || serverError.message || JSON.stringify(serverError));
+        setError(serverError.message || serverError.code || JSON.stringify(serverError));
       } else if (typeof serverError === 'string') {
         setError(serverError);
       } else {
-        setError('Invalid corporate credentials. Please try again.');
+        setError('Gateway routing failure.');
       }
     } finally {
       setLoading(false);
